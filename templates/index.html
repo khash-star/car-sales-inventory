@@ -58,6 +58,7 @@
     {% endwith %}
     <h1>🚗 {{ title }}</h1>
     
+    {% if not is_guest %}
     <div style="text-align: center; margin-bottom: 20px;">
         <a href="{{ url_for('add_car') }}" style="
             text-decoration: none;
@@ -68,7 +69,7 @@
             font-weight: bold;
         ">➕ Add New Car</a>
     </div>
-
+    {% endif %}
     <div style="text-align: center; margin-bottom: 30px;">
         <form method="GET" action="{{ url_for('list_inventory') }}" style="display: block; margin: 0 auto; width: fit-content; border: 1px solid #ccc; padding: 15px; border-radius: 8px; background-color: #f9f9f9;">
             
@@ -128,7 +129,7 @@
                 <th>Price</th>
                 <th>Mileage</th>
                 <th>Color</th>
-                <th>Actions</th> 
+                {% if not is_guest %}<th>Actions</th>{% endif %} 
             </tr>
         </thead>
         <tbody>
@@ -142,6 +143,7 @@
                 <td>{{ "{:,}".format(car.mileage) }} mi</td>
                 <td>{{ car.color }}</td>
                 
+                {% if not is_guest %}
                 <td>
                     <a href="{{ url_for('edit_car', car_id=car.id) }}" style="
                         background-color: #007bff; 
@@ -166,6 +168,7 @@
                         </button>
                     </form>
                 </td>
+                {% endif %}
                 
             </tr>
             {% endfor %}
