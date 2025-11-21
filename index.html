@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
+        h1 { color: #333; text-align: center; }
+        .inventory-table { 
+            width: 80%; 
+            margin: 20px auto; 
+            border-collapse: collapse; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            background-color: white; 
+        }
+        .inventory-table th, .inventory-table td { 
+            padding: 12px 15px; 
+            border: 1px solid #ddd; 
+            text-align: left; 
+        }
+        .inventory-table th { 
+            background-color: #007bff; 
+            color: white; 
+        }
+        .inventory-table tr:nth-child(even) { 
+            background-color: #f2f2f2; 
+        }
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div style="text-align: center;">
+      {% for category, message in messages %}
+      <div style="
+        padding: 10px; 
+        margin-bottom: 15px; 
+        border: 1px solid transparent; 
+        border-radius: 4px; 
+        width: 60%; 
+        margin-left: auto;
+        margin-right: auto;
+        /* Category-аас хамаарсан өнгөний тохиргоо */
+        {% if category == 'success' %}
+          background-color: #d4edda; color: #155724; border-color: #c3e6cb;
+        {% elif category == 'warning' %}
+          background-color: #fff3cd; color: #856404; border-color: #ffeeba;
+        {% elif category == 'danger' %}
+          background-color: #f8d7da; color: #721c24; border-color: #f5c6cb;
+        {% endif %}
+      ">
+        <strong>{{ message }}</strong>
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+    <h1>🚗 {{ title }}</h1>
+    
+    <table class="inventory-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>Year</th>
+                <th>Price</th>
+                <th>Mileage</th>
+                <th>Color</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in inventory %}
+            <tr>
+                <td>{{ car.id }}</td>
+                <td>{{ car.make }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.year }}</td>
+                <td>${{ "{:,.2f}".format(car.price) }}</td>
+                <td>{{ "{:,}".format(car.mileage) }} mi</td>
+                <td>{{ car.color }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+    </table>
+    
+    <p style="text-align: center;">Total Cars in Stock: **{{ inventory | length }}**</p>
+
+</body>
+</html>

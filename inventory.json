@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "make": "Toyota",
+        "model": "Camry",
+        "year": 2022,
+        "price": 25000,
+        "mileage": 15000,
+        "color": "Silver"
+    },
+    {
+        "id": 2,
+        "make": "Honda",
+        "model": "CR-V",
+        "year": 2019,
+        "price": 19500,
+        "mileage": 42000,
+        "color": "Red"
+    },
+    {
+        "id": 3,
+        "make": "Ford",
+        "model": "Mustang",
+        "year": 2023,
+        "price": 38000,
+        "mileage": 5000,
+        "color": "Black"
+    }
+]
