@@ -188,4 +188,11 @@ def delete_car(car_id):
 
 # 5. Run the application
 if __name__ == '__main__':
-    app.run(debug=True)
+ # ... (Бусад бүх функцууд болон routes хэвээр үлдэнэ)
+
+# 5. Run the application
+if __name__ == '__main__':
+    # Render (болон бусад сервер) дээр ажиллуулахын тулд
+    # host='0.0.0.0' болон port=os.environ.get('PORT')-ийг ашиглана.
+    # debug=True-г устгана, учир нь энэ нь production-д тохиромжгүй.
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
