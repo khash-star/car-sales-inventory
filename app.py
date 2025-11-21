@@ -185,11 +185,6 @@ def delete_car(car_id):
     
     return redirect(url_for('list_inventory'))
 
-
-# 5. Run the application
-if __name__ == '__main__':
- # ... (Бусад бүх функцууд болон routes хэвээр үлдэнэ)
-
 # 5. Run the application
 if __name__ == '__main__':
     # Render (болон бусад сервер) дээр ажиллуулахын тулд
