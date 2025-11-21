@@ -184,10 +184,9 @@ def delete_car(car_id):
         save_inventory(INVENTORY)
     
     return redirect(url_for('list_inventory'))
+# ... (Бусад бүх функцууд болон routes хэвээр үлдэнэ)
 
-# 5. Run the application
+# 5. Run the application (Local Development-д зориулсан)
 if __name__ == '__main__':
-    # Render (болон бусад сервер) дээр ажиллуулахын тулд
-    # host='0.0.0.0' болон port=os.environ.get('PORT')-ийг ашиглана.
-    # debug=True-г устгана, учир нь энэ нь production-д тохиромжгүй.
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    # Production-д Gunicorn ашиглаж байгаа тул, энд зөвхөн debug-ийг үлдээнэ
+    app.run(debug=True)
