@@ -31,6 +31,7 @@ def customer_list_inventory():
     
     # Query Parameter-үүдийг авах (Шүүлтүүрт зориулж)
     search_query = request.args.get('query', '').lower()
+    # Query параметрийг алдаагүй авах
     min_price = request.args.get('min_price', type=int)
     max_price = request.args.get('max_price', type=int)
     min_year = request.args.get('min_year', type=int)
@@ -41,9 +42,15 @@ def customer_list_inventory():
     # Шүүлтүүрийн логик
     for car in INVENTORY:
         car_attributes = f"{car.get('make', '')} {car.get('model', '')} {car.get('year', '')} {car.get('color', '')}".lower()
+        
+        # A. Текстийн хайлт
         text_match = (not search_query) or (search_query in car_attributes)
+        
+        # B. Үнийн шүүлтүүр
         price_match = (min_price is None or car['price'] >= min_price) and \
                       (max_price is None or car['price'] <= max_price)
+        
+        # C. Оны шүүлтүүр
         year_match = (min_year is None or car['year'] >= min_year) and \
                      (max_year is None or car['year'] <= max_year)
         
@@ -53,7 +60,7 @@ def customer_list_inventory():
     filtered_inventory = results 
 
     return render_template(
-        'customer_inventory.html', # Шинэ темплейт рүү зааж байна
+        'customer_inventory.html', # Зөв темплейт рүү зааж байна
         inventory=filtered_inventory, 
         title="Available Car Models",
         current_query=search_query,
@@ -62,5 +69,5 @@ def customer_list_inventory():
 
 # 2. Run the application
 if __name__ == '__main__':
-    # Local-д 5001 порт дээр ажиллуулна
+    # Production-д зориулсан Gunicorn-ийг үл тоомсорлож, локалоор 5001 порт дээр ажиллуулна
     app.run(debug=True, port=5001)

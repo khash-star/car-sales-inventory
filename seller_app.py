@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import json
 import os   
-import datetime # Оны шалгалт хийхэд хэрэгтэй
+import datetime # Validation-д хэрэгтэй
 
 # Define the file path for our inventory data
 INVENTORY_FILE = 'inventory.json'
@@ -26,7 +26,8 @@ def save_inventory(inventory_list):
 
 # --- APPLICATION SETUP ---
 
-app = Flask(__name__)
+# Аппликейшний нэр (seller_app)
+app = Flask(__name__) 
 app.config['SECRET_KEY'] = 'your_strong_and_unique_secret_key' 
 
 # Load the inventory once when the application starts
@@ -47,9 +48,9 @@ def get_next_id():
 def list_inventory():
     """
     Renders the 'index.html' template with filtering options.
-    UnboundLocalError-ийг зассан хувилбар.
+    Guest Mode-ийг дэмжсэн хувилбар.
     """
-    # Шинэ: 'guest=true' параметр байгаа эсэхийг шалгана
+    # Guest Mode-ийг шалгана: Худалдан авагчийн горимд CRUD-ийг нууна.
     is_guest = request.args.get('guest', '').lower() == 'true'
     
     # Query Parameter-үүдийг авах
@@ -85,12 +86,12 @@ def list_inventory():
     filtered_inventory = results 
 
     return render_template(
-        'index.html', 
+        'seller_inventory.html', # Зөв темплейт нэр
         inventory=filtered_inventory, 
         title="Current Car Inventory",
         current_query=search_query,
         min_price=min_price, max_price=max_price, min_year=min_year, max_year=max_year,
-        is_guest=is_guest # is_guest-ийг дамжуулж байна
+        is_guest=is_guest # is_guest-ийг темплейт руу дамжуулж байна
     )
 
 # 2. Add Car Route (Validation-тай)
@@ -132,7 +133,7 @@ def add_car():
         save_inventory(INVENTORY)
         return redirect(url_for('list_inventory'))
         
-    return render_template('add_car.html', title="Add New Car")
+    return render_template('seller_inventory_add.html', title="Add New Car") # Зөв темплейт нэр
 
 # 3. Edit Car Route (Validation-тай)
 @app.route('/edit_car/<int:car_id>', methods=['GET', 'POST'])
@@ -177,7 +178,7 @@ def edit_car(car_id):
         save_inventory(INVENTORY)
         return redirect(url_for('list_inventory'))
         
-    return render_template('edit_car.html', title=f"Edit Car ID {car_id}", car=car_to_edit)
+    return render_template('seller_inventory_edit.html', title=f"Edit Car ID {car_id}", car=car_to_edit) # Зөв темплейт нэр
 
 
 # 4. Delete Car Route
@@ -203,5 +204,4 @@ def delete_car(car_id):
 
 # 5. Run the application (Local Development-д зориулсан)
 if __name__ == '__main__':
-    # Production-д Gunicorn ашиглаж байгаа тул, энд зөвхөн debug-ийг үлдээнэ
     app.run(debug=True)
