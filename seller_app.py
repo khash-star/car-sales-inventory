@@ -47,10 +47,9 @@ def get_next_id():
 @app.route('/')
 def list_inventory():
     """
-    Renders the 'index.html' template with filtering options.
+    Renders the 'seller_inventory.html' template with filtering options.
     Guest Mode-ийг дэмжсэн хувилбар.
     """
-    # Guest Mode-ийг шалгана: Худалдан авагчийн горимд CRUD-ийг нууна.
     is_guest = request.args.get('guest', '').lower() == 'true'
     
     # Query Parameter-үүдийг авах
@@ -116,8 +115,9 @@ def add_car():
                 flash(f"Он (Year) нь {current_year}-аас их байж болохгүй.", 'danger')
             
             return redirect(url_for('add_car'))
+        
         # --- END VALIDATION ---
-
+        
         new_car_data = {
             "id": get_next_id(), 
             "make": request.form['make'],
@@ -204,7 +204,4 @@ def delete_car(car_id):
 
 # 5. Run the application (Local Development-д зориулсан)
 if __name__ == '__main__':
-    app.run(debug=True)
-=======
-    # Production-д Gunicorn ашиглаж байгаа тул, энд зөвхөн debug-ийг үлдээнэ
     app.run(debug=True)
