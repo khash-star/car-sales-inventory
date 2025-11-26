@@ -4,7 +4,6 @@ import os
 
 # Define the file path for our inventory data (SELLER APP-тай адил файл)
 INVENTORY_FILE = 'inventory.json'
-
 # --- DATA PERSISTENCE FUNCTIONS (Уншихын тулд шаардлагатай) ---
 def load_inventory():
     """Loads the car inventory list from the JSON file."""
