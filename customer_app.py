@@ -120,5 +120,5 @@ def car_details(car_id):
 
 # 3. Run the application
 if __name__ == '__main__':
-    # Local-д 5001 порт дээр ажиллуулна
-    app.run(debug=True, port=5
+    app.run(debug=True)
+
