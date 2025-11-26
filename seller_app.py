@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import json
-import os   
+import os # <--- Энэ мөрийг цэвэрлэв.
 import datetime 
 
 # --- CONFIGURATION ---
@@ -185,7 +185,11 @@ def edit_car(car_id):
         current_year = datetime.datetime.now().year
         
         if price < 0 or mileage < 0 or year > current_year:
-            # ... validation messages ...
+            if price < 0 or mileage < 0:
+                flash("Үнэ болон гүйлтийн утгууд сөрөг тоо байж болохгүй.", 'danger')
+            if year > current_year:
+                flash(f"Он (Year) нь {current_year}-аас их байж болохгүй.", 'danger')
+                
             return redirect(url_for('edit_car', car_id=car_id)) 
         
         # Update the car's details
