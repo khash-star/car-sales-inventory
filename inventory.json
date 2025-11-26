@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "make": "Toyota",
+        "make": "Toyota\u0431\u04e9\u044b\u044d\u0440\u044b\u0436\u04e9\u044d\u0430\u0440\u044b\u0436\u044d",
         "model": "Camry",
         "year": 2022,
         "price": 25000,
@@ -37,11 +37,11 @@
     },
     {
         "id": 5,
-        "make": "rtyw45uw45",
-        "model": "4w5uyw54",
+        "make": "\u044b\u04e9\u0430\u043d\u043e\u0440\u0431\u043d\u044d\u043e",
+        "model": "\u044b\u0436\u04e9\u0430\u044d\u0440\u0436\u044d\u043d\u0440\u044b",
         "year": 2020,
-        "price": 3464256,
-        "mileage": 42357624,
-        "color": "fdgj"
+        "price": 23,
+        "mileage": 4563753,
+        "color": "\u0445\u0440\u043e\u043b\u0433\u0440"
     }
 ]
