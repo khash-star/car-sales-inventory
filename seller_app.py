@@ -9,15 +9,17 @@ import datetime
 INVENTORY_FILE = 'inventory.json'
 # --- DATA PERSISTENCE FUNCTIONS ---
 
+# --- DATA PERSISTENCE FUNCTIONS ---
+
 def load_inventory():
-    # ... (load_inventory function is unchanged)
-    if not os.path.exists(INVENTORY_FILE):
-        return []
-    try:
-        with open(INVENTORY_FILE, 'r') as f:
-            return json.load(f)
-    except json.JSONDecodeError:
-        return []
+    """Loads the car inventory list from the JSON file."""
+    if not os.path.exists(INVENTORY_FILE):
+        return []
+    try:
+        with open(INVENTORY_FILE, 'r') as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return []
 
 def save_inventory(inventory_list):
     # ... (save_inventory function is unchanged)
