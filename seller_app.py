@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import json
-import os 
-import datetime 
-
-# --- CONFIGURATION ---
+import os   
+import datetime # Validation-д хэрэгтэй
 
 # Define the file path for our inventory data
 INVENTORY_FILE = 'inventory.json'
+
 # --- DATA PERSISTENCE FUNCTIONS ---
 
 def load_inventory():
@@ -27,7 +26,7 @@ def save_inventory(inventory_list):
 
 # --- APPLICATION SETUP ---
 
-# Аппликейшний нэр
+# Аппликейшний нэр (seller_app)
 app = Flask(__name__) 
 app.config['SECRET_KEY'] = 'your_strong_and_unique_secret_key' 
 
@@ -42,94 +41,70 @@ def get_next_id():
     return max(car['id'] for car in INVENTORY) + 1
 
 
-# --- ROUTING HELPER FUNCTION (Шүүлтүүрийн логикийг давтахгүй байхын тулд) ---
+# --- APPLICATION ROUTES ---
 
-def filter_inventory(search_query, min_price, max_price, min_year, max_year):
-    """Applies search and filter logic to the INVENTORY."""
-    results = []
+# 1. Main Inventory List Route with Search/Filter Logic
+@app.route('/')
+def list_inventory():
+    """
+    Renders the 'seller_inventory.html' template with filtering options.
+    Guest Mode-ийг дэмжсэн хувилбар.
+    """
+    is_guest = request.args.get('guest', '').lower() == 'true'
+    
+    # Query Parameter-үүдийг авах
+    search_query = request.args.get('query', '').lower()
+    min_price = request.args.get('min_price', type=int)
+    max_price = request.args.get('max_price', type=int)
+    min_year = request.args.get('min_year', type=int)
+    max_year = request.args.get('max_year', type=int)
+    
+    # 1. Шүүлтүүрийн үр дүнг хадгалах жагсаалт
+    results = [] 
+    
+    # 2. Бүх INVENTORY-г давтаж, шүүлтүүрийг хэрэгжүүлэх
     for car in INVENTORY:
-        # Text Search
+        
+        # A. Үндсэн хайлт (Text Search)
         car_attributes = f"{car.get('make', '')} {car.get('model', '')} {car.get('year', '')} {car.get('color', '')}".lower()
         text_match = (not search_query) or (search_query in car_attributes)
         
-        # Price Filter
+        # B. Үнийн шүүлтүүр (Price Range)
         price_match = (min_price is None or car['price'] >= min_price) and \
                       (max_price is None or car['price'] <= max_price)
             
-        # Year Filter
+        # C. Оны шүүлтүүр (Year Range)
         year_match = (min_year is None or car['year'] >= min_year) and \
                      (max_year is None or car['year'] <= max_year)
 
+        # D. Бүх шүүлтүүр таарч байвал нэмнэ
         if text_match and price_match and year_match:
             results.append(car)
-    return results
-
-
-# --- CUSTOMER (ХЭРЭГЛЭГЧ) ROUTES ---
-
-## 1. Үндсэн хуудас (Read-Only)
-@app.route('/')
-def customer_list_inventory():
-    """Renders the 'customer_inventory.html' (Read-Only mode) template."""
     
-    # Query Parameter-үүдийг авах
-    search_query = request.args.get('query', '').lower()
-    min_price = request.args.get('min_price', type=int)
-    max_price = request.args.get('max_price', type=int)
-    min_year = request.args.get('min_year', type=int)
-    max_year = request.args.get('max_year', type=int)
-    
-    # Шүүлтүүрийн логикийг дуудна
-    filtered_inventory = filter_inventory(search_query, min_price, max_price, min_year, max_year)
-    
+    # 3. filtered_inventory-д үр дүнг онооно
+    filtered_inventory = results 
+
     return render_template(
-        'customer_inventory.html', 
+        'seller_inventory.html', # Зөв темплейт нэр
         inventory=filtered_inventory, 
-        title="Available Car Models",
+        title="Current Car Inventory",
         current_query=search_query,
         min_price=min_price, max_price=max_price, min_year=min_year, max_year=max_year,
+        is_guest=is_guest # is_guest-ийг темплейт руу дамжуулж байна
     )
 
-
-# --- ADMIN/SELLER (УДИРДАХ) ROUTES ---
-
-## 2. Admin Dashboard (CRUD үйлдлүүдтэй үндсэн хуудас)
-@app.route('/admin')
-def admin_list_inventory():
-    """Renders the 'seller_inventory.html' (Admin mode) template with filtering options."""
-    
-    # Query Parameter-үүдийг авах
-    search_query = request.args.get('query', '').lower()
-    min_price = request.args.get('min_price', type=int)
-    max_price = request.args.get('max_price', type=int)
-    min_year = request.args.get('min_year', type=int)
-    max_year = request.args.get('max_year', type=int)
-    
-    # Шүүлтүүрийн логикийг дуудна
-    filtered_inventory = filter_inventory(search_query, min_price, max_price, min_year, max_year)
-    
-    return render_template(
-        'seller_inventory.html', 
-        inventory=filtered_inventory, 
-        title="Current Car Inventory (Admin)",
-        current_query=search_query,
-        min_price=min_price, max_price=max_price, min_year=min_year, max_year=max_year,
-        is_admin=True 
-    )
-
-
-## 3. Add Car Route (Admin)
-@app.route('/admin/add_car', methods=['GET', 'POST'])
-def admin_add_car(): # <--- Зөв функцын нэр
+# 2. Add Car Route (Validation-тай)
+@app.route('/add_car', methods=['GET', 'POST'])
+def add_car():
     if request.method == 'POST':
-        # --- INPUT VALIDATION ---
+        # --- INPUT VALIDATION (УТГА ШАЛГАЛТ) ---
         try:
             year = int(request.form['year'])
             price = int(request.form['price'])
             mileage = int(request.form['mileage'])
         except ValueError:
             flash("Үнэ, Он, Гүйлтийн утгууд заавал тоо байх ёстой.", 'danger')
-            return redirect(url_for('admin_add_car')) # <--- Зөв дуудлага
+            return redirect(url_for('add_car'))
 
         current_year = datetime.datetime.now().year
         
@@ -139,7 +114,7 @@ def admin_add_car(): # <--- Зөв функцын нэр
             if year > current_year:
                 flash(f"Он (Year) нь {current_year}-аас их байж болохгүй.", 'danger')
             
-            return redirect(url_for('admin_add_car')) # <--- Зөв дуудлага
+            return redirect(url_for('add_car'))
         
         # --- END VALIDATION ---
         
@@ -156,30 +131,28 @@ def admin_add_car(): # <--- Зөв функцын нэр
         INVENTORY.append(new_car_data)
         flash(f"Машин: {new_car_data['make']} {new_car_data['model']}-ийг амжилттай нэмлээ!", 'success')
         save_inventory(INVENTORY)
+        return redirect(url_for('list_inventory'))
         
-        return redirect(url_for('admin_list_inventory')) 
-        
-    return render_template('seller_inventory_add.html', title="Add New Car") 
+    return render_template('seller_inventory_add.html', title="Add New Car") # Зөв темплейт нэр
 
-
-## 4. Edit Car Route (Admin)
-@app.route('/admin/edit_car/<int:car_id>', methods=['GET', 'POST'])
-def admin_edit_car(car_id): # <--- Зөв функцын нэр
+# 3. Edit Car Route (Validation-тай)
+@app.route('/edit_car/<int:car_id>', methods=['GET', 'POST'])
+def edit_car(car_id):
     car_to_edit = next((car for car in INVENTORY if car['id'] == car_id), None)
 
     if car_to_edit is None:
         flash(f"Car with ID {car_id} not found.", 'danger')
-        return redirect(url_for('admin_list_inventory')) 
+        return redirect(url_for('list_inventory'))
 
     if request.method == 'POST':
-        # --- INPUT VALIDATION ---
+        # --- INPUT VALIDATION (УТГА ШАЛГАЛТ) ---
         try:
             year = int(request.form['year'])
             price = int(request.form['price'])
             mileage = int(request.form['mileage'])
         except ValueError:
             flash("Үнэ, Он, Гүйлтийн утгууд заавал тоо байх ёстой.", 'danger')
-            return redirect(url_for('admin_edit_car', car_id=car_id)) # <--- Зөв дуудлага
+            return redirect(url_for('edit_car', car_id=car_id))
 
         current_year = datetime.datetime.now().year
         
@@ -189,7 +162,8 @@ def admin_edit_car(car_id): # <--- Зөв функцын нэр
             if year > current_year:
                 flash(f"Он (Year) нь {current_year}-аас их байж болохгүй.", 'danger')
                 
-            return redirect(url_for('admin_edit_car', car_id=car_id)) # <--- Зөв дуудлага
+            return redirect(url_for('edit_car', car_id=car_id)) 
+        # --- END VALIDATION ---
         
         # Update the car's details
         car_to_edit['make'] = request.form['make']
@@ -202,14 +176,14 @@ def admin_edit_car(car_id): # <--- Зөв функцын нэр
         flash(f"Машин: {car_to_edit['make']} {car_to_edit['model']}-ийн мэдээллийг амжилттай шинэчиллээ!", 'success')
         
         save_inventory(INVENTORY)
-        return redirect(url_for('admin_list_inventory')) 
+        return redirect(url_for('list_inventory'))
         
-    return render_template('seller_inventory_edit.html', title=f"Edit Car ID {car_id}", car=car_to_edit) 
+    return render_template('seller_inventory_edit.html', title=f"Edit Car ID {car_id}", car=car_to_edit) # Зөв темплейт нэр
 
 
-## 5. Delete Car Route (Admin)
-@app.route('/admin/delete_car/<int:car_id>', methods=['POST'])
-def admin_delete_car(car_id): # <--- Зөв функцын нэр
+# 4. Delete Car Route
+@app.route('/delete_car/<int:car_id>', methods=['POST'])
+def delete_car(car_id):
     global INVENTORY
     
     original_length = len(INVENTORY)
@@ -225,9 +199,9 @@ def admin_delete_car(car_id): # <--- Зөв функцын нэр
 
         save_inventory(INVENTORY)
     
-    return redirect(url_for('admin_list_inventory')) 
+    return redirect(url_for('list_inventory'))
 
 
-# 6. Run the application (Local Development-д зориулсан)
+# 5. Run the application (Local Development-д зориулсан)
 if __name__ == '__main__':
     app.run(debug=True)
