@@ -1,141 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
-        h1 { color: #333; text-align: center; }
-        .inventory-table { 
-            width: 90%; /* Actions багана нэмэгдсэн тул өргөнийг нэмэв */
-            margin: 20px auto; 
-            border-collapse: collapse; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
-            background-color: white; 
-        }
-        .inventory-table th, .inventory-table td { 
-            padding: 12px 15px; 
-            border: 1px solid #ddd; 
-            text-align: left; 
-        }
-        .inventory-table th { 
-            background-color: #007bff; 
-            color: white; 
-        }
-        .inventory-table tr:nth-child(even) { 
-            background-color: #f2f2f2; 
-        }
-        .form-container {
-            width: 65%; 
-            margin: 20px auto;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            background-color: white;
-            text-align: center;
-        }
-        .form-group input, .form-container input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .form-actions button {
-            padding: 10px 20px;
-            background-color: #ffc107;
-            border: none;
-            border-radius: 5px;
-            color: #333;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .action-btn { 
-            padding: 5px 10px; 
-            border: none; 
-            border-radius: 3px; 
-            color: white; 
-            cursor: pointer; 
-            text-decoration: none;
-            font-size: 14px;
-            display: inline-block;
-            margin: 2px;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
+        h1 { color: #333; text-align: center; }
+        .inventory-table { 
+            width: 80%; 
+            margin: 20px auto; 
+            border-collapse: collapse; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            background-color: white; 
         }
-        .edit-btn { background-color: #007bff; }
-        .delete-btn { background-color: #dc3545; }
-    </style>
+        .inventory-table th, .inventory-table td { 
+            padding: 12px 15px; 
+            border: 1px solid #ddd; 
+            text-align: left; 
+        }
+        .inventory-table th { 
+            background-color: #007bff; 
+            color: white; 
+        }
+        .inventory-table tr:nth-child(even) { 
+            background-color: #f2f2f2; 
+        }
+        /* Search/Filter Form-ийн загвар */
+        .form-container {
+            width: 60%; /* Өргөнийг нэмэв */
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: white;
+            text-align: center;
+        }
+        .form-group input, .form-container input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-actions button {
+            padding: 10px 20px;
+            background-color: #ffc107;
+            border: none;
+            border-radius: 5px;
+            color: #333;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>🚗 {{ title }}</h1>
+    <h1>🚗 {{ title }}</h1>
     
-    <div style="text-align: center; margin-bottom: 20px;">
-        <a href="{{ url_for('admin_add_car') }}" class="action-btn edit-btn" style="background-color: #28a745;">Add New Car</a>
-    </div>
-    
-    <div class="form-container" style="margin-bottom: 30px;">
-        <form method="GET" action="{{ url_for('admin_list_inventory') }}" style="display: block; margin: 0 auto; width: fit-content;">
-            
-            <div style="margin-bottom: 10px;">
-                <input type="text" 
-                       name="query" 
-                       placeholder="Search by Make, Model, Year..." 
-                       value="{{ current_query if current_query else '' }}" 
-                       style="width: 250px;" class="form-group input">
-            </div>
-            
-            <div style="margin-bottom: 15px; display: flex; gap: 20px; justify-content: center;">
-                <div>
-                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Price ($):</label>
-                    <input type="number" name="min_price" placeholder="Min Price" value="{{ min_price if min_price is not none else '' }}" min="0" step="1000" style="width: 120px;" class="form-group input">
-                    -
-                    <input type="number" name="max_price" placeholder="Max Price" value="{{ max_price if max_price is not none else '' }}" min="0" step="1000" style="width: 120px;" class="form-group input">
-                </div>
-                
-                <div>
-                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Year:</label>
-                    <input type="number" name="min_year" placeholder="Min Year" value="{{ min_year if min_year is not none else '' }}" min="1900" max="2100" style="width: 100px;" class="form-group input">
-                    -
-                    <input type="number" name="max_year" placeholder="Max Year" value="{{ max_year if max_year is not none else '' }}" min="1900" max="2100" style="width: 100px;" class="form-group input">
-                </div>
-            </div>
+    <div class="form-container" style="margin-bottom: 30px;">
+        <form method="GET" action="{{ url_for('customer_list_inventory') }}" style="display: block; margin: 0 auto; width: fit-content;">
+            
+            <div style="margin-bottom: 10px;">
+                <input type="text" 
+                       name="query" 
+                       placeholder="Search by Make, Model, Year..." 
+                       value="{{ current_query if current_query else '' }}" 
+                       style="width: 250px;" class="form-group input">
+            </div>
+            
+            <div style="margin-bottom: 15px; display: flex; gap: 20px; justify-content: center;">
+                <div>
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Price ($):</label>
+                    <input type="number" name="min_price" placeholder="Min Price" value="{{ min_price if min_price is not none else '' }}" min="0" step="1000" style="width: 120px;" class="form-group input">
+                    -
+                    <input type="number" name="max_price" placeholder="Max Price" value="{{ max_price if max_price is not none else '' }}" min="0" step="1000" style="width: 120px;" class="form-group input">
+                </div>
+                
+                <div>
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Year:</label>
+                    <input type="number" name="min_year" placeholder="Min Year" value="{{ min_year if min_year is not none else '' }}" min="1900" max="2100" style="width: 100px;" class="form-group input">
+                    -
+                    <input type="number" name="max_year" placeholder="Max Year" value="{{ max_year if max_year is not none else '' }}" min="1900" max="2100" style="width: 100px;" class="form-group input">
+                </div>
+            </div>
 
-            <div class="form-actions">
-                <button type="submit">🔍 Apply Filters</button>
-                {% if current_query or min_price or max_price or min_year or max_year %}
-                    <a href="{{ url_for('admin_list_inventory') }}" style="
-                        margin-left: 15px; 
-                        text-decoration: none; 
-                        color: #dc3545;
-                        font-size: 14px;
-                    ">Clear Filters</a>
-                {% endif %}
-            </div>
-        </form>
-    </div>
-    <table class="inventory-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Make</th>
-                <th>Model</th>
-                <th>Year</th>
-                <th>Price</th>
-                <th>Mileage</th>
-                <th>Color</th>
-                <th>Actions</th>             </tr>
-        </thead>
-        <tbody>
-            {% for car in inventory %}
-            <tr>
-                <td>{{ car.id }}</td>
-                <td>{{ car.make }}</td>
-                <td>{{ car.model }}</td>
-                <td>{{ car.year }}</td>
-                <td>${{ "{:,.2f}".format(car.price) }}</td>
-                <td>{{ "{:,}".format(car.mileage) }} mi</td>
-                <td>{{ car.color }}</td>
-                
-                <td>
-                                        <a href="{{ url_for('admin_edit_car', car_id=car.id) }}" class="action-btn edit-btn">Edit</a>
-                    
-                    <form action
+            <div class="form-actions">
+                <button type="submit">🔍 Apply Filters</button>
+                {% if current_query or min_price or max_price or min_year or max_year %}
+                    <a href="{{ url_for('customer_list_inventory') }}" style="
+                        margin-left: 15px; 
+                        text-decoration: none; 
+                        color: #dc3545;
+                        font-size: 14px;
+                    ">Clear Filters</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    <table class="inventory-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>Year</th>
+                <th>Price</th>
+                <th>Mileage</th>
+                <th>Color</th>
+                <th>Info</th> 
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in inventory %}
+            <tr>
+                <td>{{ car.id }}</td>
+                <td>{{ car.make }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.year }}</td>
+                <td>${{ "{:,.2f}".format(car.price) }}</td>
+                <td>{{ "{:,}".format(car.mileage) }} mi</td>
+                <td>{{ car.color }}</td>
+                
+                <td>
+                    <a href="{{ url_for('car_details', car_id=car.id) }}" style="
+                        background-color: #17a2b8; /* Info blue color */
+                        color: white; 
+                        border: none; 
+                        padding: 5px 10px; 
+                        border-radius: 3px; 
+                        text-decoration: none;
+                        display: inline-block;
+                    ">
+                        More Info
+                    </a>
+                </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+    </table>
+    
+    <p style="text-align: center;">Total Cars in Stock: **{{ inventory | length }}**</p>
+
+</body>
+</html>
