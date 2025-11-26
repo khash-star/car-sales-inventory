@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import json
 import os
 
@@ -18,9 +18,41 @@ def load_inventory():
 
 # --- APPLICATION SETUP ---
 app = Flask(__name__)
-# Энэ апп CRUD хийхгүй тул SECRET_KEY шаардлагагүй, гэхдээ байхад илүүдэхгүй.
-app.config['SECRET_KEY'] = 'customer_app_key' 
+app.config['SECRET_KEY'] = 'customer_app_key'
 INVENTORY = load_inventory()
+
+# --- ADMIN ROUTE (/admin) ---
+@app.route("/admin")
+def admin():
+    # Админ сервисийн Render URL
+    admin_url = "https://car-sales-inventory.onrender.com"
+    
+    # Вариант 1: iframe-ээр дотор нь ачаах (URL /admin хэвээр үлдэнэ)
+    return f"""
+    <html>
+      <head>
+        <title>Admin Panel</title>
+        <style>
+          html, body {{
+            margin: 0;
+            padding: 0;
+            height: 100%;
+          }}
+          iframe {{
+            border: none;
+            width: 100%;
+            height: 100vh;
+          }}
+        </style>
+      </head>
+      <body>
+        <iframe src="{admin_url}"></iframe>
+      </body>
+    </html>
+    """
+    # Хэрвээ redirect байдлаар явуулахыг хүсвэл дээрхийг комментлоод,
+    # доорх мөрийг үлдээнэ:
+    # return redirect(admin_url)
 
 # --- APPLICATION ROUTES ---
 
@@ -59,7 +91,7 @@ def customer_list_inventory():
     filtered_inventory = results 
 
     return render_template(
-        'customer_inventory.html', # Зөв темплейт рүү зааж байна
+        'customer_inventory.html',
         inventory=filtered_inventory, 
         title="Available Car Models",
         current_query=search_query,
@@ -81,13 +113,12 @@ def car_details(car_id):
                                message=f"Car with ID {car_id} not found in inventory."), 404
         
     return render_template(
-        'customer_car_details.html', # New template for details
+        'customer_car_details.html',
         title=f"Details for {car_info['make']} {car_info['model']}", 
         car=car_info
     )
 
-
 # 3. Run the application
 if __name__ == '__main__':
     # Local-д 5001 порт дээр ажиллуулна
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5
