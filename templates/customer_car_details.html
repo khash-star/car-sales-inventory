@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
+        h1 { color: #333; text-align: center; }
+        .details-container {
+            width: 60%;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .detail-item {
+            padding: 10px 0;
+            border-bottom: 1px dashed #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        .detail-item strong {
+            color: #333;
+        }
+        .detail-item span {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .back-link { display: block; margin-top: 20px; text-align: center; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+    <h1>🚗 Car Details: {{ car.make }} {{ car.model }}</h1>
+    
+    <div class="details-container">
+        <div class="detail-item"><strong>Make:</strong> <span>{{ car.make }}</span></div>
+        <div class="detail-item"><strong>Model:</strong> <span>{{ car.model }}</span></div>
+        <div class="detail-item"><strong>Year:</strong> <span>{{ car.year }}</span></div>
+        <div class="detail-item"><strong>Price:</strong> <span>${{ "{:,.2f}".format(car.price) }}</span></div>
+        <div class="detail-item"><strong>Mileage:</strong> <span>{{ "{:,}".format(car.mileage) }} mi</span></div>
+        <div class="detail-item"><strong>Color:</strong> <span>{{ car.color }}</span></div>
+        <div class="detail-item"><strong>Inventory ID:</strong> <span>{{ car.id }}</span></div>
+    </div>
+
+    <a href="{{ url_for('customer_list_inventory') }}" class="back-link">← Back to Car Models List</a>
+
+</body>
+</html>

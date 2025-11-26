@@ -26,9 +26,9 @@
         .inventory-table tr:nth-child(even) { 
             background-color: #f2f2f2; 
         }
-        /* Search/Filter Form-ийн загвар (Худалдан авагчдад харагдана) */
+        /* Search/Filter Form-ийн загвар */
         .form-container {
-            width: 50%;
+            width: 60%; /* Өргөнийг нэмэв */
             margin: 20px auto;
             padding: 15px;
             border-radius: 8px;
@@ -36,7 +36,7 @@
             background-color: white;
             text-align: center;
         }
-        .form-group input {
+        .form-group input, .form-container input {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -106,7 +106,8 @@
                 <th>Price</th>
                 <th>Mileage</th>
                 <th>Color</th>
-                </tr>
+                <th>Info</th> 
+            </tr>
         </thead>
         <tbody>
             {% for car in inventory %}
@@ -118,6 +119,20 @@
                 <td>${{ "{:,.2f}".format(car.price) }}</td>
                 <td>{{ "{:,}".format(car.mileage) }} mi</td>
                 <td>{{ car.color }}</td>
+                
+                <td>
+                    <a href="{{ url_for('car_details', car_id=car.id) }}" style="
+                        background-color: #17a2b8; /* Info blue color */
+                        color: white; 
+                        border: none; 
+                        padding: 5px 10px; 
+                        border-radius: 3px; 
+                        text-decoration: none;
+                        display: inline-block;
+                    ">
+                        More Info
+                    </a>
+                </td>
                 </tr>
             {% endfor %}
             </tbody>

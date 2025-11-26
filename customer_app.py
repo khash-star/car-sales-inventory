@@ -66,7 +66,28 @@ def customer_list_inventory():
         min_price=min_price, max_price=max_price, min_year=min_year, max_year=max_year
     )
 
-# 2. Run the application
+# 2. New Car Details Route
+@app.route('/car_details/<int:car_id>')
+def car_details(car_id):
+    """
+    Renders a read-only detail page for a single car.
+    """
+    # Find the car in the INVENTORY list
+    car_info = next((car for car in INVENTORY if car['id'] == car_id), None)
+
+    if car_info is None:
+        # Хэрэв машин олддохгүй бол алдаа гаргана
+        return render_template('error.html', title="Car Not Found", 
+                               message=f"Car with ID {car_id} not found in inventory."), 404
+        
+    return render_template(
+        'customer_car_details.html', # New template for details
+        title=f"Details for {car_info['make']} {car_info['model']}", 
+        car=car_info
+    )
+
+
+# 3. Run the application
 if __name__ == '__main__':
-    # Local-д 5001 порт дээр ажиллуулна (Conflict-гүй)
+    # Local-д 5001 порт дээр ажиллуулна
     app.run(debug=True, port=5001)
