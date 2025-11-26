@@ -4,7 +4,6 @@ import os
 
 # Define the file path for our inventory data (SELLER APP-тай адил файл)
 INVENTORY_FILE = 'inventory.json'
-
 # --- DATA PERSISTENCE FUNCTIONS (Уншихын тулд шаардлагатай) ---
 def load_inventory():
     """Loads the car inventory list from the JSON file."""
@@ -70,4 +69,7 @@ def customer_list_inventory():
 # 2. Run the application
 if __name__ == '__main__':
     # Production-д зориулсан Gunicorn-ийг үл тоомсорлож, локалоор 5001 порт дээр ажиллуулна
+    app.run(debug=True, port=5001)
+=======
+    # Local-д 5001 порт дээр ажиллуулна
     app.run(debug=True, port=5001)

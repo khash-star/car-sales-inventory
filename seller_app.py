@@ -205,3 +205,6 @@ def delete_car(car_id):
 # 5. Run the application (Local Development-д зориулсан)
 if __name__ == '__main__':
     app.run(debug=True)
+=======
+    # Production-д Gunicorn ашиглаж байгаа тул, энд зөвхөн debug-ийг үлдээнэ
+    app.run(debug=True)
