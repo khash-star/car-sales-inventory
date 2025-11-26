@@ -26,74 +26,97 @@
         .inventory-table tr:nth-child(even) { 
             background-color: #f2f2f2; 
         }
-        /* Search/Filter Form-ийн загвар */
-        .form-container {
-            width: 60%; /* Өргөнийг нэмэв */
-            margin: 20px auto;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            background-color: white;
-            text-align: center;
-        }
-        .form-group input, .form-container input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .form-actions button {
-            padding: 10px 20px;
-            background-color: #ffc107;
-            border: none;
-            border-radius: 5px;
-            color: #333;
-            cursor: pointer;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
-
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="text-align: center;">
+          {% for category, message in messages %}
+          <div style="
+            padding: 10px; 
+            margin-bottom: 15px; 
+            border: 1px solid transparent; 
+            border-radius: 4px; 
+            width: 60%; 
+            margin-left: auto;
+            margin-right: auto;
+            /* Category-аас хамаарсан өнгөний тохиргоо */
+            {% if category == 'success' %}
+              background-color: #d4edda; color: #155724; border-color: #c3e6cb;
+            {% elif category == 'warning' %}
+              background-color: #fff3cd; color: #856404; border-color: #ffeeba;
+            {% elif category == 'danger' %}
+              background-color: #f8d7da; color: #721c24; border-color: #f5c6cb;
+            {% endif %}
+          ">
+            <strong>{{ message }}</strong>
+          </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
     <h1>🚗 {{ title }}</h1>
     
-    <div class="form-container" style="margin-bottom: 30px;">
-        <form method="GET" action="{{ url_for('customer_list_inventory') }}" style="display: block; margin: 0 auto; width: fit-content;">
+    {% if not is_guest %}
+    <div style="text-align: center; margin-bottom: 20px;">
+        <a href="{{ url_for('add_car') }}" style="
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        ">➕ Add New Car</a>
+    </div>
+    {% endif %}
+    <div style="text-align: center; margin-bottom: 30px;">
+        <form method="GET" action="{{ url_for('list_inventory') }}" style="display: block; margin: 0 auto; width: fit-content; border: 1px solid #ccc; padding: 15px; border-radius: 8px; background-color: #f9f9f9;">
             
-            <div style="margin-bottom: 10px;">
+            <div style="margin-bottom: 10px; display: flex; gap: 10px; justify-content: center;">
                 <input type="text" 
                        name="query" 
                        placeholder="Search by Make, Model, Year..." 
                        value="{{ current_query if current_query else '' }}" 
-                       style="width: 250px;" class="form-group input">
+                       style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 250px;">
             </div>
             
             <div style="margin-bottom: 15px; display: flex; gap: 20px; justify-content: center;">
                 <div>
                     <label style="font-weight: bold; display: block; margin-bottom: 5px;">Price ($):</label>
-                    <input type="number" name="min_price" placeholder="Min Price" value="{{ min_price if min_price is not none else '' }}" min="0" step="1000" style="width: 120px;" class="form-group input">
+                    <input type="number" name="min_price" placeholder="Min Price" value="{{ min_price if min_price is not none else '' }}" min="0" step="1000" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 120px;">
                     -
-                    <input type="number" name="max_price" placeholder="Max Price" value="{{ max_price if max_price is not none else '' }}" min="0" step="1000" style="width: 120px;" class="form-group input">
+                    <input type="number" name="max_price" placeholder="Max Price" value="{{ max_price if max_price is not none else '' }}" min="0" step="1000" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 120px;">
                 </div>
                 
                 <div>
                     <label style="font-weight: bold; display: block; margin-bottom: 5px;">Year:</label>
-                    <input type="number" name="min_year" placeholder="Min Year" value="{{ min_year if min_year is not none else '' }}" min="1900" max="2100" style="width: 100px;" class="form-group input">
+                    <input type="number" name="min_year" placeholder="Min Year" value="{{ min_year if min_year is not none else '' }}" min="1900" max="2100" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100px;">
                     -
-                    <input type="number" name="max_year" placeholder="Max Year" value="{{ max_year if max_year is not none else '' }}" min="1900" max="2100" style="width: 100px;" class="form-group input">
+                    <input type="number" name="max_year" placeholder="Max Year" value="{{ max_year if max_year is not none else '' }}" min="1900" max="2100" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100px;">
                 </div>
             </div>
 
-            <div class="form-actions">
-                <button type="submit">🔍 Apply Filters</button>
-                {% if current_query or min_price or max_price or min_year or max_year %}
-                    <a href="{{ url_for('customer_list_inventory') }}" style="
-                        margin-left: 15px; 
-                        text-decoration: none; 
-                        color: #dc3545;
-                        font-size: 14px;
-                    ">Clear Filters</a>
-                {% endif %}
-            </div>
+            <button type="submit" style="
+                padding: 10px 20px; 
+                background-color: #ffc107; 
+                border: none; 
+                border-radius: 5px; 
+                color: #333; 
+                cursor: pointer;
+                font-weight: bold;
+            ">
+                🔍 Apply Filters
+            </button>
+            
+            {% if current_query or min_price or max_price or min_year or max_year %}
+                <a href="{{ url_for('list_inventory') }}" style="
+                    margin-left: 15px; 
+                    text-decoration: none; 
+                    color: #dc3545;
+                    font-size: 14px;
+                ">Clear Filters</a>
+            {% endif %}
         </form>
     </div>
     <table class="inventory-table">
@@ -106,7 +129,7 @@
                 <th>Price</th>
                 <th>Mileage</th>
                 <th>Color</th>
-                <th>Info</th> 
+                {% if not is_guest %}<th>Actions</th>{% endif %} 
             </tr>
         </thead>
         <tbody>
@@ -120,20 +143,34 @@
                 <td>{{ "{:,}".format(car.mileage) }} mi</td>
                 <td>{{ car.color }}</td>
                 
+                {% if not is_guest %}
                 <td>
-                    <a href="{{ url_for('car_details', car_id=car.id) }}" style="
-                        background-color: #17a2b8; /* Info blue color */
+                    <a href="{{ url_for('edit_car', car_id=car.id) }}" style="
+                        background-color: #007bff; 
                         color: white; 
                         border: none; 
                         padding: 5px 10px; 
                         border-radius: 3px; 
+                        cursor: pointer;
                         text-decoration: none;
+                        margin-right: 5px;
                         display: inline-block;
                     ">
-                        More Info
+                        Edit
                     </a>
+
+                    <form method="POST" action="{{ url_for('delete_car', car_id=car.id) }}" 
+                          style="display:inline;">
+                        <button type="submit" 
+                                onclick="return confirm('Are you sure you want to delete this car (ID: {{ car.id }})?');" 
+                                style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            Delete
+                        </button>
+                    </form>
                 </td>
-                </tr>
+                {% endif %}
+                
+            </tr>
             {% endfor %}
             </tbody>
     </table>
